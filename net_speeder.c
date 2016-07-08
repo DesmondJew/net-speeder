@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 	if (argc == ARGC_NUM) {
 		dev = argv[1];
 		filter_rule = argv[2];
-		ss_port = argv[3];
+		ss_port = (u_short)atol(argv[3]);
 		printf("Device: %s\n", dev);
 		printf("Filter rule: %s\n", filter_rule);
 	} else {
