@@ -60,4 +60,4 @@ Linux Cooked interface使用编译（venetX，OpenVZ）：
     #参数：./net_speeder 网卡名 加速规则（bpf规则）
     #ovz用法(加速所有源端口为shadowsocks server 端口的ip协议数据(tcp and udp))：
     // Just for shadowsocks server port, eg:port = 12345.
-    ./net_speeder venet0 "ip" 12345
+    nohup ./net_speeder venet0 "ip" 12345 >/dev/null 2>&1 &
