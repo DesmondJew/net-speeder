@@ -1,3 +1,7 @@
+// Add some rules for special use of shadowsocks.
+// By Jew.07.2016
+
+
 #include <pcap.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,13 +14,14 @@
 /* default snap length (maximum bytes per packet to capture) */
 #define SNAP_LEN 65535
 
-#ifdef COOKED
-	#define ETHERNET_H_LEN 16
-#else
-	#define ETHERNET_H_LEN 14
-#endif
-
 #define SPECIAL_TTL 88
+
+/* TCP or UPD header port part*/
+typedef struct tcpudp_header_port
+{
+     uint16_t h_sport;       /* source port */
+     uint16_t h_dport;       /* destination port */
+}tcpudp_header_port;
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void print_usage(void);
@@ -36,14 +41,23 @@ void print_usage(void) {
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
 	static int count = 1;                  
-	struct libnet_ipv4_hdr *ip;              
+	struct libnet_ipv4_hdr *ip; 
+	tcpudp_header_port *header_port;
+	u_short header_sport;
 
 	libnet_t *libnet_handler = (libnet_t *)args;
 	count++;
 	
-	ip = (struct libnet_ipv4_hdr*)(packet + ETHERNET_H_LEN);
+	ip = (struct libnet_ipv4_hdr*)(packet + 14);
+	
+	/* retireve the position of the tcp header */
+    	ip_len = (ip->ver_ihl & 0xf) * 4;
+    	header_port = (tcpudp_header_port *) ((u_char*)ip + ip_len);
+    	
+    	/* convert from network byte order to host byte order */
+        header_sport = ntohs( header_port->h_sport );
 
-	if(ip->ip_ttl != SPECIAL_TTL) {
+	if((header_sport == ss_port) && (ip->ip_ttl != SPECIAL_TTL)) {
 		ip->ip_ttl = SPECIAL_TTL;
 		int len_written = libnet_adv_write_raw_ipv4(libnet_handler, (u_int8_t *)ip, ntohs(ip->ip_len));
 		if(len_written < 0) {
@@ -66,10 +80,11 @@ libnet_t* start_libnet(char *dev) {
 	return libnet_handler;
 }
 
-#define ARGC_NUM 3
+#define ARGC_NUM 4
 int main(int argc, char **argv) {
 	char *dev = NULL;
 	char errbuf[PCAP_ERRBUF_SIZE];
+	u_short ss_port; // shadowsocks server port. set it in the argv[3].
 	pcap_t *handle;
 
 	char *filter_rule = NULL;
@@ -79,6 +94,7 @@ int main(int argc, char **argv) {
 	if (argc == ARGC_NUM) {
 		dev = argv[1];
 		filter_rule = argv[2];
+		sport = argv[3];
 		printf("Device: %s\n", dev);
 		printf("Filter rule: %s\n", filter_rule);
 	} else {
