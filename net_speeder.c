@@ -54,7 +54,7 @@ typedef struct tcpudp_header_port
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void print_usage(void);
-u_short ss_port = 0; // shadowsocks server port. set it in the argv[3].
+u_short ss_port = 443; // shadowsocks server port. set it in the argv[3].
 
 
 /*
