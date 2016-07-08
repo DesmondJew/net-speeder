@@ -79,11 +79,11 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
     	/* convert from network byte order to host byte order */
         header_sport = ntohs( header_port->h_sport );
 
-	if((header_sport == ss_port) && (ip->ip_ttl != SPECIAL_TTL)) {
-		ip->ip_ttl = SPECIAL_TTL;
-		int len_written = libnet_adv_write_raw_ipv4(libnet_handler, (u_int8_t *)ip, ntohs(ip->ip_len));
+	if((header_sport == ss_port) && (ip->ttl != SPECIAL_TTL)) {
+		ip->ttl = SPECIAL_TTL;
+		int len_written = libnet_adv_write_raw_ipv4(libnet_handler, (u_int8_t *)ip, ntohs(ip->tlen));
 		if(len_written < 0) {
-			printf("packet len:[%d] actual write:[%d]\n", ntohs(ip->ip_len), len_written);
+			printf("packet len:[%d] actual write:[%d]\n", ntohs(ip->tlen), len_written);
 			printf("err msg:[%s]\n", libnet_geterror(libnet_handler));
 		}
 	} else {
