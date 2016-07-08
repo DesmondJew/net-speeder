@@ -22,6 +22,14 @@
 	#define ETHERNET_H_LEN 14
 #endif
 
+/* 4 bytes IP address */
+typedef struct ip_address{
+    u_char byte1;
+    u_char byte2;
+    u_char byte3;
+    u_char byte4;
+}ip_address;
+
 /* IPv4 header */
 typedef struct ip_header{
     u_char  ver_ihl;        // Version (4 bits) + Internet header length (4 bits)
