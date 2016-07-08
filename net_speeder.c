@@ -16,6 +16,12 @@
 
 #define SPECIAL_TTL 88
 
+#ifdef COOKED
+	#define ETHERNET_H_LEN 16
+#else
+	#define ETHERNET_H_LEN 14
+#endif
+
 /* TCP or UPD header port part*/
 typedef struct tcpudp_header_port
 {
@@ -48,7 +54,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	libnet_t *libnet_handler = (libnet_t *)args;
 	count++;
 	
-	ip = (struct libnet_ipv4_hdr*)(packet + 14);
+	ip = (struct libnet_ipv4_hdr*)(packet + ETHERNET_H_LEN);
 	
 	/* retireve the position of the tcp header */
     	ip_len = (ip->ver_ihl & 0xf) * 4;
