@@ -106,7 +106,7 @@ libnet_t* start_libnet(char *dev) {
 int main(int argc, char **argv) {
 	char *dev = NULL;
 	char errbuf[PCAP_ERRBUF_SIZE];
-	u_short ss_port; // shadowsocks server port. set it in the argv[3].
+	u_short ss_port = 0; // shadowsocks server port. set it in the argv[3].
 	pcap_t *handle;
 
 	char *filter_rule = NULL;
