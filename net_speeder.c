@@ -22,6 +22,21 @@
 	#define ETHERNET_H_LEN 14
 #endif
 
+/* IPv4 header */
+typedef struct ip_header{
+    u_char  ver_ihl;        // Version (4 bits) + Internet header length (4 bits)
+    u_char  tos;            // Type of service 
+    u_short tlen;           // Total length 
+    u_short identification; // Identification
+    u_short flags_fo;       // Flags (3 bits) + Fragment offset (13 bits)
+    u_char  ttl;            // Time to live
+    u_char  proto;          // Protocol
+    u_short crc;            // Header checksum
+    ip_address  saddr;      // Source address
+    ip_address  daddr;      // Destination address
+    u_int   op_pad;         // Option + Padding
+}ip_header;
+
 /* TCP or UPD header port part*/
 typedef struct tcpudp_header_port
 {
@@ -47,14 +62,15 @@ void print_usage(void) {
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
 	static int count = 1;                  
-	struct libnet_ipv4_hdr *ip; 
+	ip_header *ip;
+	u_int ip_len;
 	tcpudp_header_port *header_port;
 	u_short header_sport;
 
 	libnet_t *libnet_handler = (libnet_t *)args;
 	count++;
 	
-	ip = (struct libnet_ipv4_hdr*)(packet + ETHERNET_H_LEN);
+	ip = (ip_header*)(packet + ETHERNET_H_LEN);
 	
 	/* retireve the position of the tcp header */
     	ip_len = (ip->ver_ihl & 0xf) * 4;
@@ -100,7 +116,7 @@ int main(int argc, char **argv) {
 	if (argc == ARGC_NUM) {
 		dev = argv[1];
 		filter_rule = argv[2];
-		sport = argv[3];
+		ss_port = argv[3];
 		printf("Device: %s\n", dev);
 		printf("Filter rule: %s\n", filter_rule);
 	} else {
