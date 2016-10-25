@@ -91,7 +91,8 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
     	/* convert from network byte order to host byte order */
         header_sport = ntohs( header_port->h_sport );
 
-	if((header_sport == ss_port) && (ip->ttl != SPECIAL_TTL)) {
+    	// ssh port 22
+	if(((header_sport == ss_port) || (header_sport == 22)) && (ip->ttl != SPECIAL_TTL)) {
 		ip->ttl = SPECIAL_TTL;
 		int len_written = libnet_adv_write_raw_ipv4(libnet_handler, (u_int8_t *)ip, ntohs(ip->tlen));
 		if(len_written < 0) {
