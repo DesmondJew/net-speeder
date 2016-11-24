@@ -61,3 +61,5 @@ Linux Cooked interface使用编译（venetX，OpenVZ）：
     #ovz用法(加速所有源端口为shadowsocks server 端口的ip协议数据(tcp and udp))：
     // Just for shadowsocks server port, eg:port = 12345.
     nohup ./net_speeder venet0 "ip" 12345 >/dev/null 2>&1 &
+    // If KVM check the network, normally eth0
+    nohup ./net_speeder eth0 "ip" 12345 >/dev/null 2>&1 &
