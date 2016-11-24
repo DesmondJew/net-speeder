@@ -54,7 +54,6 @@ typedef struct tcpudp_header_port
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void print_usage(void);
-u_short ss_port = 443; // shadowsocks server port. set it in the argv[3].
 
 
 /*
@@ -122,6 +121,7 @@ int main(int argc, char **argv) {
 	pcap_t *handle;
 
 	char *filter_rule = NULL;
+	u_short ss_port = 443; // shadowsocks server port. set it in the argv[3].
 	struct bpf_program fp;
 	bpf_u_int32 net, mask;
 
