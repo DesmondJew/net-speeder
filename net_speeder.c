@@ -54,6 +54,7 @@ typedef struct tcpudp_header_port
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void print_usage(void);
+u_short ss_port;
 
 
 /*
